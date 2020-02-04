@@ -5,10 +5,11 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	http1 "net/http"
+
 	http "github.com/go-kit/kit/transport/http"
 	handlers "github.com/gorilla/handlers"
 	mux "github.com/gorilla/mux"
-	http1 "net/http"
 )
 
 // makeGetUserListHandler creates the handler logic
@@ -55,4 +56,29 @@ func err2code(err error) int {
 
 type errorWrapper struct {
 	Error string `json:"error"`
+}
+
+// makeLoginHandler creates the handler logic
+func makeLoginHandler(m *mux.Router, endpoints endpoint.Endpoints, options []http.ServerOption) {
+	m.Methods("POST").Path("/login").Handler(handlers.CORS(handlers.AllowedMethods([]string{"POST"}), handlers.AllowedOrigins([]string{"*"}))(http.NewServer(endpoints.LoginEndpoint, decodeLoginRequest, encodeLoginResponse, options...)))
+}
+
+// decodeLoginRequest is a transport/http.DecodeRequestFunc that decodes a
+// JSON-encoded request from the HTTP request body.
+func decodeLoginRequest(_ context.Context, r *http1.Request) (interface{}, error) {
+	req := endpoint.LoginRequest{}
+	err := json.NewDecoder(r.Body).Decode(&req)
+	return req, err
+}
+
+// encodeLoginResponse is a transport/http.EncodeResponseFunc that encodes
+// the response as JSON to the response writer
+func encodeLoginResponse(ctx context.Context, w http1.ResponseWriter, response interface{}) (err error) {
+	if f, ok := response.(endpoint.Failure); ok && f.Failed() != nil {
+		ErrorEncoder(ctx, f.Failed(), w)
+		return nil
+	}
+	w.Header().Set("Content-Type", "application/json; charset=utf-8")
+	err = json.NewEncoder(w).Encode(response)
+	return
 }

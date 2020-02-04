@@ -13,5 +13,6 @@ import (
 func NewHTTPHandler(endpoints endpoint.Endpoints, options map[string][]http.ServerOption) http1.Handler {
 	m := mux.NewRouter()
 	makeGetUserListHandler(m, endpoints, options["GetUserList"])
+	makeLoginHandler(m, endpoints, options["Login"])
 	return m
 }

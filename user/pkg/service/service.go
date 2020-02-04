@@ -1,7 +1,7 @@
 package service
 
 import (
-	"awesomeProject/model"
+	"awesomeProject/user/pkg/model"
 	"context"
 )
 
@@ -10,6 +10,7 @@ type UserService interface {
 	// Add your methods here
 	// e.x: Foo(ctx context.Context,s string)(rs string, err error)
 	GetUserList(ctx context.Context, userList []model.User) (message string, err error)
+	Login(ctx context.Context, username, pwd string) (message model.Resp, err error)
 }
 
 type basicUserService struct{}
@@ -31,4 +32,9 @@ func New(middleware []Middleware) UserService {
 		svc = m(svc)
 	}
 	return svc
+}
+
+func (b *basicUserService) Login(ctx context.Context, username string, pwd string) (message model.Resp, err error) {
+	// TODO implement the business logic of Login
+	return message, err
 }

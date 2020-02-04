@@ -6,21 +6,19 @@ import (
 	service "awesomeProject/user/pkg/service"
 	"flag"
 	"fmt"
-	endpoint1 "github.com/go-kit/kit/endpoint"
-	log "github.com/go-kit/kit/log"
-	prometheus "github.com/go-kit/kit/metrics/prometheus"
-	lightsteptracergo "github.com/lightstep/lightstep-tracer-go"
-	group "github.com/oklog/oklog/pkg/group"
-	opentracinggo "github.com/opentracing/opentracing-go"
-	prometheus1 "github.com/prometheus/client_golang/prometheus"
-	promhttp "github.com/prometheus/client_golang/prometheus/promhttp"
 	"net"
 	http1 "net/http"
 	"os"
 	"os/signal"
-	appdash "sourcegraph.com/sourcegraph/appdash"
-	opentracing "sourcegraph.com/sourcegraph/appdash/opentracing"
 	"syscall"
+
+	endpoint1 "github.com/go-kit/kit/endpoint"
+	log "github.com/go-kit/kit/log"
+	prometheus "github.com/go-kit/kit/metrics/prometheus"
+	group "github.com/oklog/oklog/pkg/group"
+	opentracinggo "github.com/opentracing/opentracing-go"
+	prometheus1 "github.com/prometheus/client_golang/prometheus"
+	promhttp "github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 var tracer opentracinggo.Tracer
@@ -47,8 +45,6 @@ func Run() {
 	logger = log.NewLogfmtLogger(os.Stderr)
 	logger = log.With(logger, "ts", log.DefaultTimestampUTC)
 	logger = log.With(logger, "caller", log.DefaultCaller)
-
-
 
 	svc := service.New(getServiceMiddleware(logger))
 	eps := endpoint.New(svc, getEndpointMiddleware(logger))

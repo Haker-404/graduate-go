@@ -1,4 +1,0 @@
-# github.com/go-kit/kit v0.9.0
-github.com/go-kit/kit/endpoint
-# github.com/golang/protobuf v1.3.2
-github.com/golang/protobuf/proto
