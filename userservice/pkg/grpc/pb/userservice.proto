@@ -1,0 +1,84 @@
+syntax = "proto3";
+
+package pb;
+
+import "google/api/annotations.proto";
+//import "protoc-gen-swagger/options/annotations.proto";
+//option (grpc.gateway.protoc_gen_swagger.options.openapiv2_swagger) = {
+//  info: {
+//        title: "grpc gateway sample";
+//        version: "1.0";
+//        license: {
+//          name: "MIT";
+//          };
+//   };
+//   schemes: HTTP;
+//};
+service UserService {
+ rpc Login       (LoginRequest      ) returns (LoginReply      ) {
+   option (google.api.http) = {
+     post: "/user/login"
+     body: "*"
+   };
+ }
+ rpc GetUserList (GetUserListRequest) returns (GetUserListReply) {
+   option (google.api.http) = {
+     get: "/user/list"
+   };
+ }
+ rpc GetUserInfo (GetUserInfoRequest) returns (GetUserInfoReply) {
+  option (google.api.http) = {
+     get: "/user/info/{seq}"
+   };
+ }
+ rpc Sign (SignRequest) returns (SignReply) {
+  option (google.api.http) = {
+     post: "/user/sign"
+   };
+ }
+}
+
+message LoginRequest {
+ string username = 1;
+ string pwd      = 2;
+}
+
+message LoginReply {
+ int32 status = 1;
+ Resp  resp   = 2;
+}
+
+message GetUserListRequest {}
+
+message GetUserListReply {
+ int32 status = 1;
+ repeated User user = 2;
+ Resp resp = 3;
+}
+message GetUserInfoRequest {
+ string seq = 1;
+}
+
+message GetUserInfoReply {
+ int32 status = 1;
+  User user = 2;
+ Resp resp = 3;
+}
+message Resp {
+ string msg  = 1;
+ string succ = 2;
+}
+
+message User {
+ string name  = 1;
+ string seq   = 2;
+ bytes  photo = 3;
+}
+
+message SignRequest{
+ string seq = 1;
+}
+message SignReply{
+ int32 status = 1;
+ Resp resp = 2;
+}

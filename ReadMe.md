@@ -43,3 +43,7 @@ go-kit提供以下功能：
 5、Request tracing（请求跟踪）
 
 6、Service discovery and load balancing（服务发现和负载均衡）
+但随着随着业务的发展，请求量越来越大，同时，有些请求的链路也变长了，为了继续保证接口的高并发和低时延特性，团队有少量业务开始尝试GRPC。根据测试，压测一个空接口，GRPC的性能大约是HTTP＋JSON的2～3倍，在这里推荐一个压测框架fperf 。
+kit g s hello -t grpc
+
+Zipkin提供分布式追踪

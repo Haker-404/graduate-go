@@ -1,2 +1,0 @@
-#protoc -I. -I%GOPATH%/src -I%GOPATH%/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis --plugin=protoc-gen-go=$GOPATH/bin/protoc-gen-go --grpc-gateway_out=logtostderr=true:. --go_out=plugins=grpc:. user.proto
-protoc -I. -I%GOPATH%/src/github.com/grpc-ecosystem/grpc-gateway/third_party/googleapis --grpc-gateway_out=logtostderr=true:. user.proto
