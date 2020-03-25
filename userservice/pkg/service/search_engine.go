@@ -1,30 +1,47 @@
 package service
 
 import (
+	"awesomeProject/userservice/pkg/model"
+	"bufio"
+	"flag"
 	"github.com/huichen/wukong/engine"
 	"github.com/huichen/wukong/types"
 	"log"
+	"os"
+	"strconv"
+	"strings"
 )
 
 var (
 	// searcher是协程安全的
 	searcher = engine.Engine{}
+	users    = map[string]model.User{}
+	userInfo = flag.String("user_info", "../third_party/user_info", "学生信息")
 )
 
-func main() {
+func SearchRun() {
 	// 初始化
-	searcher.Init(types.EngineInitOptions{
-		SegmenterDictionaries: "github.com/huichen/wukong/data/dictionary.txt"})
+	searcher.Init(types.EngineInitOptions{})
 	defer searcher.Close()
-
-	// 将文档加入索引，docId 从1开始
-	searcher.IndexDocument(1, types.DocumentIndexData{Content: "此次百度收购将成中国互联网最大并购"}, false)
-	searcher.IndexDocument(2, types.DocumentIndexData{Content: "百度宣布拟全资收购91无线业务"}, false)
-	searcher.IndexDocument(3, types.DocumentIndexData{Content: "百度是中国最大的搜索引擎"}, false)
-
-	// 等待索引刷新完毕
+	file, err := os.Open(*userInfo)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		data := strings.Split(scanner.Text(), "||||")
+		user := model.User{}
+		user.Seq = data[0]
+		user.Name = data[1]
+		users[user.Seq] = user
+	}
+	for seq, userItem := range users {
+		seq, _ := strconv.ParseUint(seq, 10, 64)
+		searcher.IndexDocument(seq, types.DocumentIndexData{
+			Content: userItem.Name,
+		}, false)
+	}
 	searcher.FlushIndex()
 
-	// 搜索输出格式见types.SearchResponse结构体
-	log.Print(searcher.Search(types.SearchRequest{Text: "百度中国"}))
 }

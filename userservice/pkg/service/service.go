@@ -6,13 +6,14 @@ import (
 	jwt "awesomeProject/userservice/pkg/utils"
 	"context"
 	"fmt"
+	"time"
 )
 
 // UserserviceService describes the service.
 type UserserviceService interface {
 	// Add your methods here
 	// e.x: Foo(ctx context.Context,s string)(rs string, err error)
-	GetUserList(ctx context.Context) (userList []model.User, message model.Resp)
+	GetUserList(ctx context.Context, date string, isSigned bool) (signInfoList []model.SignInfo, message model.Resp)
 	Login(ctx context.Context, username, pwd string) (message model.Resp, err error)
 	GetUserInfo(ctx context.Context, seq string) (user model.User, message model.Resp)
 	Sign(ctx context.Context, seq string) (message model.Resp)
@@ -22,8 +23,10 @@ type basicUserserviceService struct{}
 
 var d = &dao.UserDao{}
 
-func (b *basicUserserviceService) GetUserList(ctx context.Context) (userList []model.User, message model.Resp) {
+func (b *basicUserserviceService) GetUserList(ctx context.Context, date string, isSigned bool) (signInfoList []model.SignInfo, message model.Resp) {
 	// TODO implement the business logic of GetUserList
+	t_time, _ := time.ParseInLocation("2006-01-02 15:04:05", date, time.Local)
+	signInfoList, message = d.GetUserList(t_time, isSigned)
 	return
 }
 func (b *basicUserserviceService) GetUserInfo(ctx context.Context, seq string) (user model.User, message model.Resp) {

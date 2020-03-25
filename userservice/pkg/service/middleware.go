@@ -24,11 +24,11 @@ func LoggingMiddleware(logger log.Logger) Middleware {
 
 }
 
-func (l loggingMiddleware) GetUserList(ctx context.Context) (userList []model.User, message model.Resp) {
+func (l loggingMiddleware) GetUserList(ctx context.Context, date string, isSigned bool) (signInfoList []model.SignInfo, message model.Resp) {
 	defer func() {
 		l.logger.Log("")
 	}()
-	return l.next.GetUserList(ctx)
+	return l.next.GetUserList(ctx, date, isSigned)
 }
 func (l loggingMiddleware) Login(ctx context.Context, username string, pwd string) (message model.Resp, err error) {
 	defer func() {

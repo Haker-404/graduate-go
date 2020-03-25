@@ -10,21 +10,24 @@ import (
 
 // GetUserListRequest collects the request parameters for the GetUserList method.
 type GetUserListRequest struct {
+	Date     string `json:"date"`
+	IsSigned bool   `json:"isSigned"`
 }
 
 // GetUserListResponse collects the response parameters for the GetUserList method.
 type GetUserListResponse struct {
-	UserList []model.User `json:"userList"`
-	Message  model.Resp   `json:"message"`
+	SignInfoList []model.SignInfo `json:"signInfoList"`
+	Message      model.Resp       `json:"message"`
 }
 
 // MakeGetUserListEndpoint returns an endpoint that invokes GetUserList on the service.
 func MakeGetUserListEndpoint(s service.UserserviceService) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
-		userList, message := s.GetUserList(ctx)
+		req := request.(GetUserListRequest)
+		signInfoList, message := s.GetUserList(ctx, req.Date, req.IsSigned)
 		return GetUserListResponse{
-			Message:  message,
-			UserList: userList,
+			Message:      message,
+			SignInfoList: signInfoList,
 		}, nil
 	}
 }
@@ -114,13 +117,16 @@ type Failure interface {
 }
 
 // GetUserList implements Service. Primarily useful in a client.
-func (e Endpoints) GetUserList(ctx context.Context) (userList []model.User, message model.Resp) {
-	request := GetUserListRequest{}
+func (e Endpoints) GetUserList(ctx context.Context, date string, isSinged bool) (signInfoList []model.SignInfo, message model.Resp) {
+	request := GetUserListRequest{
+		Date:     date,
+		IsSigned: isSinged,
+	}
 	response, err := e.GetUserListEndpoint(ctx, request)
 	if err != nil {
 		return
 	}
-	return response.(GetUserListResponse).UserList, response.(GetUserListResponse).Message
+	return response.(GetUserListResponse).SignInfoList, response.(GetUserListResponse).Message
 }
 
 // Login implements Service. Primarily useful in a client.

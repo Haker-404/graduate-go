@@ -23,7 +23,8 @@ service UserService {
  }
  rpc GetUserList (GetUserListRequest) returns (GetUserListReply) {
    option (google.api.http) = {
-     get: "/user/list"
+     post: "/user/list"
+     body: "*"
    };
  }
  rpc GetUserInfo (GetUserInfoRequest) returns (GetUserInfoReply) {
@@ -48,11 +49,14 @@ message LoginReply {
  Resp  resp   = 2;
 }
 
-message GetUserListRequest {}
+message GetUserListRequest {
+ string date = 1;
+ bool isSigned = 2;
+}
 
 message GetUserListReply {
  int32 status = 1;
- repeated User user = 2;
+ repeated SignInfo signInfo = 2;
  Resp resp = 3;
 }
 message GetUserInfoRequest {
@@ -74,7 +78,11 @@ message User {
  string seq   = 2;
  bytes  photo = 3;
 }
-
+message SignInfo{
+ User user = 1;
+ string date = 2;
+ string user_seq = 3;
+}
 message SignRequest{
  string seq = 1;
 }

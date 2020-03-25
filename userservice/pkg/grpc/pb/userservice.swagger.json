@@ -42,7 +42,7 @@
       }
     },
     "/user/list": {
-      "get": {
+      "post": {
         "operationId": "GetUserList",
         "responses": {
           "200": {
@@ -58,6 +58,16 @@
             }
           }
         },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/pbGetUserListRequest"
+            }
+          }
+        ],
         "tags": [
           "UserService"
         ]
@@ -141,14 +151,26 @@
           "type": "integer",
           "format": "int32"
         },
-        "user": {
+        "signInfo": {
           "type": "array",
           "items": {
-            "$ref": "#/definitions/pbUser"
+            "$ref": "#/definitions/pbSignInfo"
           }
         },
         "resp": {
           "$ref": "#/definitions/pbResp"
+        }
+      }
+    },
+    "pbGetUserListRequest": {
+      "type": "object",
+      "properties": {
+        "date": {
+          "type": "string"
+        },
+        "isSigned": {
+          "type": "boolean",
+          "format": "boolean"
         }
       }
     },
@@ -182,6 +204,20 @@
           "type": "string"
         },
         "succ": {
+          "type": "string"
+        }
+      }
+    },
+    "pbSignInfo": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "$ref": "#/definitions/pbUser"
+        },
+        "date": {
+          "type": "string"
+        },
+        "user_seq": {
           "type": "string"
         }
       }
