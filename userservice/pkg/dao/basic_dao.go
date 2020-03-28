@@ -55,8 +55,14 @@ func (UserDao) GetUserList(date time.Time, isSigned bool) (signInfoList []model.
 	case false:
 		if date.Hour() == 0 && date.Minute() == 0 && date.Second() == 0 {
 			t_time := date.Format("2006-01-02")
-			DB.Debug().Exec("SELECT * FROM `t_user` WHERE `t_user`.`seq` NOT in ( SELECT `t_sign`.`user_seq` FROM `t_sign` WHERE Date( `date` ) = ? )", t_time)
-			// DB.Debug().Exec("SELECT t_user.* FROM t_user where not exists (select t_sign.* from t_sign where t_sign.user_seq=t_user.seq and Date(t_sign.date)!=?)",t_time).Find(&signInfoList)
+			sql := "SELECT * FROM `t_user` WHERE `t_user`.`seq` NOT in ( SELECT `t_sign`.`user_seq` FROM `t_sign` WHERE Date( `date` ) = ? )"
+			users := []model.User{}
+			DB.Debug().Raw(sql, t_time).Scan(&users)
+			for _, v := range users {
+				signInfoList = append(signInfoList, model.SignInfo{
+					User: v,
+				})
+			}
 		} else {
 			DB.Debug().Exec("SELECT b.* FROM t_user b where not exists (select a.* from t_sign a where a.user_seq=b.seq and Date(a.date)!=?)", date).Find(&signInfoList)
 		}
